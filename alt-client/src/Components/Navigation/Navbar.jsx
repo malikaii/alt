@@ -1,9 +1,36 @@
 import React from 'react'
+import { Link } from 'react-router';
+import altIcon from '../../assets/Alt.png'
 
 function Navbar() {
   return (
-    <div>Navbar</div>
-  )
+    <nav className="w-1/4 m-3 flex justify-center">
+      <div>
+        <ul className="space-y-3 text-[25px]">
+          <img className="w-15 h-10" src={altIcon} alt="alt-icon" />
+
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/">Home</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/explore">Explore</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/chat">Chat</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/events">Events</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/profile">Profile</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer ">
+            <Link to="/settings">Settings</Link>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
 }
 
 export default Navbar;
