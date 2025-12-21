@@ -13,15 +13,23 @@ import Feed from "./Pages/Home/Feed";
 import Friends from "./Pages/Home/Friends";
 import LocalEvents from "./Pages/Events/LocalEvents";
 import GlobalEvents from "./Pages/Events/GlobalEvents";
+import Login from "./Pages/Landing/Login";
+import AuthLayout from "./AuthLayout";
+import AppLayout from "./AppLayout";
+import Register from "./Pages/Landing/Register";
+import { AuthProvider } from "./Components/Auth/AuthContext";
 
 function App() {
   return (
     <>
-      <div className="flex h-screen">
-        <Navbar />
-        <div className="w-1/2 border-l-1 border-r-1 border-gray-200">
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
+      <AuthProvider >
+        <Routes>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+
+          <Route element={<AppLayout />}>
             <Route path="/home" element={<Home />}>
               <Route index element={<Feed />} />
               <Route path="friends" element={<Friends />} />
@@ -37,9 +45,9 @@ function App() {
             <Route path="/chat" element={<Chat />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </div>
-      </div>
+          </Route>
+        </Routes>
+      </AuthProvider>
     </>
   );
 }
