@@ -10,7 +10,7 @@ function Navbar() {
           <img className="w-15 h-10" src={altIcon} alt="alt-icon" />
 
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
-            <Link to="/">Home</Link>
+            <Link to="/home">Home</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
             <Link to="/explore">Explore</Link>
