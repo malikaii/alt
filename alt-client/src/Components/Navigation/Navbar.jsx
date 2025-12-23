@@ -5,7 +5,7 @@ import { useAuth } from '../Auth/AuthContext';
 
 function Navbar() {
 
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <nav className="w-1/4 m-3 flex justify-center">
@@ -26,7 +26,7 @@ function Navbar() {
             <Link to="/events">Events</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
-            <Link to="/profile">Profile</Link>
+            <Link to={`/${user?.username}`}>Profile</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer ">
             <Link to="/settings">Settings</Link>
