@@ -63,15 +63,6 @@ function ProfileFriends() {
     );
   }
 
-    if (friendsList === null || friendsList.length === 0) {
-      return (
-        <>
-          <div className="text-center">
-            <p>You don't have any friends currently. Try adding someone!</p>
-          </div>
-        </>
-      );
-    }
 
   
   if (friendsList == null || friendsList.length === 0) {
@@ -89,12 +80,30 @@ function ProfileFriends() {
     <>
       <DataContainer>
         {friendsList.map((friend, i) => (
-          <div
-            key={i}
-            className="h-20 flex items-center border-1 rounded-xl p-2 gap-2"
-          >
-            <img src="" alt="friend-pic" />
-            <h4>{friend.username}</h4>
+          <div className="h-20 flex items-center p-2 justify-between">
+            <div key={i} className="flex items-center gap-5">
+              <img
+                src=""
+                alt="profile"
+                className="h-15 w-15 border-1 rounded-4xl"
+              />
+              <h3>{friend.username}</h3>
+            </div>
+            <div>
+              <button
+                className="bg-green-600
+                        hover:bg-green-700
+                        focus:ring-4
+                         cursor-pointer
+                        text-white
+                        rounded-3xl
+                        px-4 py-2.5
+                        text-sm
+                        font-small"
+              >
+                Message
+              </button>
+            </div>
           </div>
         ))}
       </DataContainer>

@@ -87,7 +87,7 @@ function Profile() {
       <div className="flex flex-col h-1/3 justify-center items-center gap-2">
         <div className="flex flex-col gap-2">
           <img
-            className="w-35 h-35 border-1 rounded-xl"
+            className="w-35 h-35 border-1 rounded-3xl"
             src={profilePhoto || profile}
             alt="Profile-picture"
           />
@@ -96,12 +96,12 @@ function Profile() {
                         bg-green-600
                         hover:bg-green-700
                         focus:ring-4
-                        focus:ring-blue-300
+                         cursor-pointer
                         text-white
-                        rounded-md
+                        rounded-3xl
                         px-4 py-2.5
                         text-sm
-                        font-medium
+                        font-sm
                     "
             onClick={() => fileInputRef.current.click()}
           >
@@ -117,7 +117,7 @@ function Profile() {
         </div>
         <h3>{user?.username}</h3>
       </div>
-      <div className="flex h-15 justify-evenly text-center border-b-1 border-gray-200">
+      <div className="flex h-15 justify-evenly text-center border-b-2 border-gray-200">
         {tabs.map((tab) => (
           <div className=" p-3 cursor-pointer hover:border-b-2 border-green-600 hover:font-semibold">
             <Link onClick={() => setIsActive(true)} to={tab.tabLink}>
