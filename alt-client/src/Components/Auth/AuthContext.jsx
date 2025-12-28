@@ -61,7 +61,7 @@ export function AuthProvider({ children }) {
 
       const res = await fetch(`${authEndpoint}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" }, 
         credentials: "include",
         body: JSON.stringify({ username, password }),
       });
@@ -119,7 +119,7 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
+} 
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {

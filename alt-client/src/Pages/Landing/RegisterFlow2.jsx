@@ -9,7 +9,6 @@ function RegisterFlow2({ userId, onSuccess }) {
   const [userInfo, setUserInfo] = useState({
     displayName: "",
     bio: "",
-    avatarUrl: "",
     location: "",
   });
 
@@ -20,7 +19,6 @@ function RegisterFlow2({ userId, onSuccess }) {
     userId,
     displayName,
     bio,
-    avatarUrl,
     location
   ) => {
     setIsLoading(true);
@@ -30,7 +28,6 @@ function RegisterFlow2({ userId, onSuccess }) {
       if (
         displayName === "" ||
         bio === "" ||
-        avatarUrl === "" ||
         location === ""
       )
         throw new Error("Enter all fields");
@@ -43,7 +40,6 @@ function RegisterFlow2({ userId, onSuccess }) {
           userId,
           displayName,
           bio,
-          avatarUrl,
           location,
         }),
       });
@@ -103,14 +99,7 @@ function RegisterFlow2({ userId, onSuccess }) {
         placeholder="Bio"
         className="border-b-1"
       />
-      <input
-        onChange={onChangeValue}
-        name="avatarUrl"
-        value={userInfo?.avatarUrl}
-        type="text"
-        placeholder="Avatar Url"
-        className="border-b-1"
-      />
+
       <input
         onChange={onChangeValue}
         name="location"

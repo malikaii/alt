@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Components/Auth/AuthContext";
+import DataContainer from "../../Components/DataContainer";
 
 function ProfileFriends() {
   const restEndpoint = import.meta.env.VITE_API_URL;
@@ -42,23 +43,61 @@ function ProfileFriends() {
     getFriendsList();
   }, [accessToken, restEndpoint]);
 
+  if (isLoading) {
+    return (
+      <>
+        <div className="text-center">
+          <p>Loading friends...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <div className="h-60 flex items-center justify-center">
+          <p>Unable to retrieve friends at this time. Try reloading page</p>
+        </div>
+      </>
+    );
+  }
+
+    if (friendsList === null || friendsList.length === 0) {
+      return (
+        <>
+          <div className="text-center">
+            <p>You don't have any friends currently. Try adding someone!</p>
+          </div>
+        </>
+      );
+    }
+
+  
+  if (friendsList == null || friendsList.length === 0) {
+    return (
+      <>
+        <div className="h-10 flex items-center justify-center">
+          <p>You don't have any friends currently. Try adding someone first!</p>
+        </div>
+      </>
+    );
+  }
+
+
   return (
     <>
-      <div className="m-5 flex flex-col gap-5">
-        {isLoading ? (
-          <p>Loading....</p>
-        ) : (
-          friendsList.map((friend, i) => (
-            <div
-              key={i}
-              className="h-20 flex items-center border-1 rounded-xl p-2 gap-2"
-            >
-              <img src="" alt="friend-pic" />
-              <h4>{friend.username}</h4>
-            </div>
-          ))
-        )}
-      </div>
+      <DataContainer>
+        {friendsList.map((friend, i) => (
+          <div
+            key={i}
+            className="h-20 flex items-center border-1 rounded-xl p-2 gap-2"
+          >
+            <img src="" alt="friend-pic" />
+            <h4>{friend.username}</h4>
+          </div>
+        ))}
+      </DataContainer>
     </>
   );
 }

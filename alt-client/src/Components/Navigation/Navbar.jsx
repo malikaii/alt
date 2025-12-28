@@ -26,15 +26,16 @@ function Navbar() {
             <Link to="/events">Events</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
+            <Link to="/notifications">Notifications</Link>
+          </li>
+          <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer">
             <Link to={`/${user?.username}`}>Profile</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer ">
             <Link to="/settings">Settings</Link>
           </li>
           <li className="rounded-4xl p-2 hover:bg-gray-200 transition-colors duration-200 cursor-pointer ">
-            <button onClick={logout}>
-              Logout
-            </button>
+            <button onClick={logout}>Logout</button>
           </li>
         </ul>
       </div>

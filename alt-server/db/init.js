@@ -85,4 +85,21 @@ db.prepare(`
   );
 `).run();
 
+db.prepare(
+  `
+  CREATE TABLE IF NOT EXISTS notifications (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId INTEGER NOT NULL,
+  actorId INTEGER,
+  type TEXT NOT NULL,
+  message TEXT NOT NULL,
+  link TEXT,
+  isRead INTEGER DEFAULT 0,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+
+  `
+).run();
+
+
 console.log("Database initialized!");

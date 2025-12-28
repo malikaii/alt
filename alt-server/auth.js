@@ -141,13 +141,13 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/register/profile", (req, res) => {
-  const { userId, displayName, bio, avatarUrl, location } = req.body;
+  const { userId, displayName, bio, location } = req.body;
 
   try {
     db.prepare(
-      `INSERT INTO user_profiles ( userId, displayName, bio, avatarUrl, location)
-    VALUES (?, ?, ?, ?, ?)`
-    ).run(userId, displayName, bio, avatarUrl, location);
+      `INSERT INTO user_profiles ( userId, displayName, bio, location)
+    VALUES (?, ?, ?, ?)`
+    ).run(userId, displayName, bio, location);
 
     res.status(200).json({ message: "User registration completed!" });
   } catch (error) {
