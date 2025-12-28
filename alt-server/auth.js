@@ -24,25 +24,45 @@ app.use(express.urlencoded({ extended: false }));
 
 let refreshTokens = [];
 
-app.post("/token", (req, res) => {
-  const refreshToken = req.body.token;
+app.post("/refresh", (req, res) => {
+  console.log(req.cookies);
 
-  if (refreshToken == null) return res.sendStatus(401);
-  if (!refreshTokens.includes(refreshToken)) {
-    return res.sendStatus(403);
-  }
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.sendStatus(403);
+  const token = req.cookies.refreshToken; // HTTP-only cookie
+  if (!token) return res.status(401).json({ message: "No refresh token" });
+
+  try {
+    // Verify the refresh token
+    const payload = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+    // Check if token exists in DB and is not expired
+    const tokenRow = db
+      .prepare("SELECT * FROM refresh_tokens WHERE userId = ? AND token = ?")
+      .get(payload.userId, token);
+
+    if (!tokenRow || new Date(tokenRow.expiresAt) < new Date()) {
+      return res
+        .status(401)
+        .json({ message: "Refresh token invalid or expired" });
     }
-    const accessToken = generateAccessToken({ name: user.name });
-    res.json({ accessToken });
-  });
+
+    const userPayload = {
+      userId: payload.userId,
+      username: payload.username,
+    };
+    // Issue new access token
+    const accessToken = generateAccessToken(userPayload);
+
+    res.json({ accessToken: accessToken });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: "Invalid refresh token" });
+  }
 });
 
 app.delete("/logout", (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  //   refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+
+  db.prepare("DELETE FROM refresh_tokens WHERE token = ?").run(refreshToken);
 
   res.clearCookie("refreshToken", {
     httpOnly: true,
@@ -54,39 +74,45 @@ app.delete("/logout", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const {username, password} = req.body;
-
+  const { username, password } = req.body;
 
   const stmt = db.prepare(`SELECT * FROM users WHERE username = ?`);
   const user = stmt.get(username);
 
-  if(!user) return res.status(401).json({ message: "User does not exist" });
+  if (!user) return res.status(401).json({ message: "User does not exist" });
 
-  const isValid = await bcrypt.compare(password, user.passwordHash)
+  const isValid = await bcrypt.compare(password, user.passwordHash);
 
-  if (!isValid) return res.status(401).json({message: "Invalid credentials"});
-
+  if (!isValid) return res.status(401).json({ message: "Invalid credentials" });
 
   const payload = {
+    userId: user.id,
     username: user.username,
-  }
+  };
 
   const accessToken = generateAccessToken(payload);
   const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET);
-  refreshTokens.push(refreshToken);
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+  db.prepare(
+    "INSERT INTO refresh_tokens (userId, token, expiresAt) VALUES (?, ?, ?)"
+  ).run(user.id, refreshToken, expiresAt.toISOString());
+
   // Send access and refresh token back to client
   //refresh sent as http-only cookie so js can't read
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
+    secure: true, // localhost
     sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
   });
 
   res.json({ accessToken: accessToken });
 });
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "45s" });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "10m" });
 }
 
 app.post("/register", async (req, res) => {
@@ -98,18 +124,35 @@ app.post("/register", async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
 
-  const stmt = db.prepare(`
+  try {
+    const user = db
+      .prepare(
+        `
     INSERT INTO users (username, email, passwordHash)
     VALUES (?, ?, ?)
-  `);
+  `
+      )
+      .run(username, email, passwordHash);
+
+    res.status(200).json({ userId: user.lastInsertRowid });
+  } catch (err) {
+    res.status(400).json({ message: "Username or email already exists" });
+  }
+});
+
+app.post("/register/profile", (req, res) => {
+  const { userId, displayName, bio, location } = req.body;
 
   try {
-    stmt.run(username, email, passwordHash);
-  } catch (err) {
-    return res.status(500).json({ message: err.message });
-  }
+    db.prepare(
+      `INSERT INTO user_profiles ( userId, displayName, bio, location)
+    VALUES (?, ?, ?, ?)`
+    ).run(userId, displayName, bio, location);
 
-  res.status(200).json({ response: "User created successfully!" });
+    res.status(200).json({ message: "User registration completed!" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 app.listen(4000, () => {

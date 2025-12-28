@@ -1,11 +1,28 @@
+# @persistCookies
+
 POST http://localhost:4000/register 
 Content-Type: application/json
 
 {
-    "username": "malikaii",
-    "email": "love@gmail.com",
-    "password": "yes345"
+    "username": "sam",
+    "email": "sam@gmail.com",
+    "password": "123"
 }
+
+###
+POST http://localhost:4000/register/profile 
+Content-Type: application/json
+
+{
+    "userId": "2",
+    "displayName": "Samuel",
+    "bio": "Cool dude",
+    "avatarUrl": "url",
+    "location": "LA"
+}
+
+###
+POST http://localhost:4000/refresh 
 
 ###
 
@@ -14,5 +31,35 @@ Content-Type: application/json
 
 {
     "username": "malikaii",
-    "password": "yes345"
+    "password": "12"
 }
+
+###
+GET http://localhost:3000/user
+Authorization: Bearer 
+
+###
+GET http://localhost:3000/users/all
+Authorization: Bearer 
+
+###
+POST http://localhost:3000/request
+Authorization: Bearer 
+Content-Type: application/json
+
+{
+    "addresseeId": "1"
+}
+
+###
+POST http://localhost:3000/accept
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoibWFsaWthaWkiLCJpYXQiOjE3NjY1MTU1MDUsImV4cCI6MTc2NjUxNTU2NX0.aYaOfCUrKHL8JTuE00ELXK32hp9Glex-ee52i7nO0k4
+Content-Type: application/json
+
+{
+    "requesterId": "2"
+}
+
+###
+GET http://localhost:3000/friends
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoibWFsaWthaWkiLCJpYXQiOjE3NjY1MTgyMDcsImV4cCI6MTc2NjUxODgwN30.Sfrn-ofETbNYOGVzACZCPrDL0n5ZHhrPoQSspXlCGSA

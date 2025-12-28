@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 const AuthContext = createContext();
@@ -10,40 +10,43 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState(null);
 
   const authEndpoint = import.meta.env.VITE_AUTH_API_URL;
+  const restEndpoint = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
 
-
-
-    const register = async (username, email, password) => {
-      setIsLoading(true);
-      setError(null);
-
+  useEffect(() => {
+    const refreshSession = async () => {
       try {
-        if (username === "" || password === "" || email === "")
-          throw new Error("Enter all fields");
-
-        const res = await fetch(`${authEndpoint}/register`, {
+        const res = await fetch(`${authEndpoint}/refresh`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ username, email, password }),
         });
-
+ 
         if (!res.ok) {
-          const errorResponse = await res.json();
-          const errorMessage = errorResponse.message;
-          throw new Error(errorMessage);
+          logout();
+          return;
         }
 
         const data = await res.json();
+        setAccessToken(data.accessToken);
 
+        const me = await fetch(`${restEndpoint}/user`, {
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+          },
+        });
+
+        setUser(await me.json());
       } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
+        console.log(error.message);
+
+        logout();
       }
     };
+
+    refreshSession();
+  }, []);
+
 
 
 
@@ -58,7 +61,7 @@ export function AuthProvider({ children }) {
 
       const res = await fetch(`${authEndpoint}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" }, 
         credentials: "include",
         body: JSON.stringify({ username, password }),
       });
@@ -76,7 +79,6 @@ export function AuthProvider({ children }) {
       const userData = jwtDecode(data.accessToken);
 
       console.log(userData);
-      
 
       setUser(userData);
       navigate("/home");
@@ -112,12 +114,12 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, error, isLoading, accessToken, login, register, logout }}
+      value={{ user, error, isLoading, accessToken, login, logout }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+} 
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {

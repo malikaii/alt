@@ -18,11 +18,19 @@ import AuthLayout from "./AuthLayout";
 import AppLayout from "./AppLayout";
 import Register from "./Pages/Landing/Register";
 import { AuthProvider } from "./Components/Auth/AuthContext";
+import ProfileEvents from "./Pages/Profile/ProfileEvents";
+import ProfileFashion from "./Pages/Profile/ProfileFashion";
+import ProfileMusic from "./Pages/Profile/ProfileMusic";
+import ProfileFriends from "./Pages/Profile/ProfileFriends";
+import Notifications from "./Pages/Notifications/Notifications";
+import Notification from "./Components/Notification";
+import NotificationWrapper from "./Components/Navigation/NotificationWrapper";
 
 function App() {
   return (
     <>
-      <AuthProvider >
+      <AuthProvider>
+        <NotificationWrapper/>
         <Routes>
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
@@ -30,6 +38,8 @@ function App() {
           </Route>
 
           <Route element={<AppLayout />}>
+            <Route path="/" element={<Home />} />
+
             <Route path="/home" element={<Home />}>
               <Route index element={<Feed />} />
               <Route path="friends" element={<Friends />} />
@@ -43,8 +53,14 @@ function App() {
               <Route path="global" element={<GlobalEvents />} />
             </Route>
             <Route path="/chat" element={<Chat />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/:username" element={<Profile />}>
+              <Route index element={<ProfileEvents />} />
+              <Route path="fashion" element={<ProfileFashion />} />
+              <Route path="music" element={<ProfileMusic />} />
+              <Route path="friends" element={<ProfileFriends />} />
+            </Route>
             <Route path="/settings" element={<Settings />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
         </Routes>
       </AuthProvider>
